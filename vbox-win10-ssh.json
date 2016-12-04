@@ -1,0 +1,75 @@
+{
+    "builders": [{
+    "type": "virtualbox-iso",
+    "vboxmanage": [
+      [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
+      [ "modifyvm", "{{.Name}}", "--cpus", "2" ]
+    ],
+    "guest_os_type": "Windows10_64",
+	"guest_additions_mode": "{{ user `guest_additions_mode` }}",
+    "guest_additions_path": "C:/users/vagrant/VBoxGuestAdditions.iso",
+	"headless": "{{ user `headless` }}",
+    "iso_url": "{{ user `iso_url` }}",
+    "iso_checksum": "{{ user `iso_checksum` }}",
+    "iso_checksum_type": "md5",
+    "communicator": "ssh",
+    "ssh_username": "vagrant",
+    "ssh_password": "vagrant",
+    "ssh_wait_timeout": "5h",
+    "guest_additions_mode": "{{ user `guest_additions_mode` }}",
+    "shutdown_command": "a:/PackerShutdown.bat",
+    "shutdown_timeout": "15m",
+    "floppy_files": [
+      "answer_files/win10/Autounattend.xml",
+	  "cert/oracle.cer",
+      "scripts/postunattend.xml",
+      "scripts/boxstarter.ps1",
+      "scripts/package.ps1",
+	  "scripts/PackerShutdown.bat",
+	  "scripts/Test-Command.ps1",
+	  "scripts/remove-onedrive.ps1",
+	  "scripts/lib/take-ownership.psm1",
+	  "scripts/lib/force-mkdir.psm1",
+	  "scripts/SetupComplete.cmd",
+	  "scripts/openssh.ps1"
+    ]
+  }],
+	"provisioners": [
+	{
+	  "type": "file",
+	  "source": "vs6/VB6setup.exe",
+	  "destination": "C:/users/vagrant/VB6setup.exe",
+	  "direction": "upload"
+	},
+	{
+	  "type": "file",
+	  "source": "vs6/SP6setup.exe",
+	  "destination": "C:/users/vagrant/SP6setup.exe",
+	  "direction": "upload"
+	},
+	{
+		"type": "powershell",
+		"scripts": [
+			"scripts/provision.ps1",
+			"scripts/tool-installdef.ps1"
+		]
+	}
+	],
+    "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": true,
+      "output": "windows10-{{.Provider}}.box",
+      "vagrantfile_template": "vagrantfile-windows.template"
+    }
+  ],
+  "variables": {
+    "core": "",
+    "guest_additions_mode": "disable",
+    "headless": "true",
+    "iso_checksum": "b54d4d968c99833c08e499bf1a1e7d87",
+    "iso_url": "iso/14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-GB.ISO",
+	"vs_src": "vs6",
+	"vs_dst": "C:\\users\\vagrant"
+  }
+}
