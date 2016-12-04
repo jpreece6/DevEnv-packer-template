@@ -4,5 +4,6 @@ packer_cache/
 # For built boxes
 *.box
 
-# OS Image
+# OS Image and bundled tools
 *.iso
+*.exe
